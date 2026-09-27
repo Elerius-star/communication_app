@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # Backend API Server
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: collabmeet-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-jwt-secret-key}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-12345678901234567890123456789012}
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend:/app
+      - /app/__pycache__
+    networks:
+      - collabmeet-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Server (Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: collabmeet-frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - BACKEND_URL=http://backend:5000
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+    networks:
+      - collabmeet-network
+    restart: unless-stopped
+
+  # Redis for Socket.IO scaling (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: collabmeet-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - collabmeet-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # MongoDB for persistent storage (optional)
+  mongodb:
+    image: mongo:6
+    container_name: collabmeet-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD:-password}
+      - MONGO_INITDB_DATABASE=collabmeet
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - collabmeet-network
+    restart: unless-stopped
+
+  # TURN Server for WebRTC (optional)
+  turnserver:
+    image: coturn/coturn:latest
+    container_name: collabmeet-turn
+    ports:
+      - "3478:3478"
+      - "3478:3478/udp"
+      - "5349:5349"
+      - "5349:5349/udp"
+      - "49152-65535:49152-65535/udp"
+    environment:
+      - TURN_USER=${TURN_USER:-user}
+      - TURN_PASSWORD=${TURN_PASSWORD:-password}
+      - TURN_REALM=${TURN_REALM:-collabmeet.local}
+    volumes:
+      - ./turnserver.conf:/etc/coturn/turnserver.conf
+    networks:
+      - collabmeet-network
+    restart: unless-stopped
+    command: -c /etc/coturn/turnserver.conf
+
+networks:
+  collabmeet-network:
+    driver: bridge
+    name: collabmeet-network
+
+volumes:
+  redis-data:
+  mongodb-data:

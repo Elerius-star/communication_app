@@ -1,0 +1,33 @@
+# ============================================
+# CORE WEB FRAMEWORK
+# ============================================
+Flask==2.3.3
+Flask-SocketIO==5.3.4
+Flask-CORS==4.0.0
+
+# ============================================
+# AUTHENTICATION & SECURITY
+# ============================================
+Flask-JWT-Extended==4.5.3
+bcrypt==4.0.1
+cryptography==41.0.3
+PyJWT==2.8.0
+
+# ============================================
+# REAL-TIME COMMUNICATION
+# ============================================
+eventlet==0.33.3
+python-engineio>=4.7.0  # Let pip choose the right version
+python-socketio==5.9.0
+
+# ============================================
+# ENVIRONMENT & UTILITIES
+# ============================================
+python-dotenv==1.0.0
+requests==2.31.0
+
+# ============================================
+# DATABASE (Optional - for production)
+# ============================================
+# pymongo==4.5.0
+# redis==4.6.0

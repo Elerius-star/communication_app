@@ -1,0 +1,223 @@
+/* Dashboard specific styles with Orange, White, Green theme */
+
+/* ========== DASHBOARD CARDS ========== */
+.dashboard-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+    backdrop-filter: blur(8px);
+}
+
+.dashboard-card .card-header h3 {
+    color: var(--text-primary);
+}
+
+.dashboard-card .card-header h3 i {
+    color: var(--primary-orange);
+}
+
+/* ========== MEETING ITEMS ========== */
+.meeting-item .join-btn {
+    background: var(--primary-green);
+    color: white;
+    border: none;
+    padding: 4px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.meeting-item .join-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+/* ========== STATS ========== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-card .stat-number {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--primary-orange);
+}
+
+.stat-card .stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* ========== ACTIVITY ITEMS ========== */
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.activity-item .activity-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 107, 53, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-orange);
+}
+
+.activity-item .activity-content {
+    flex: 1;
+}
+
+.activity-item .activity-content .activity-text {
+    font-size: 13px;
+}
+
+.activity-item .activity-content .activity-time {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ========== STATUS INDICATORS ========== */
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-dot.online {
+    background: var(--primary-green);
+}
+
+.status-dot.offline {
+    background: var(--text-secondary);
+}
+
+.status-dot.away {
+    background: #f39c12;
+}
+
+/* ========== CREATE MEETING MODAL ========== */
+.create-meeting-form .form-group {
+    margin-bottom: 16px;
+}
+
+.create-meeting-form .form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.create-meeting-form .form-group input,
+.create-meeting-form .form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.create-meeting-form .form-group input:focus,
+.create-meeting-form .form-group select:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+}
+
+.create-meeting-form .form-group select option {
+    background: var(--dark-card);
+}
+
+/* ========== NOTIFICATION TOASTS ========== */
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toast {
+    padding: 14px 20px;
+    border-radius: 12px;
+    background: var(--dark-card);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--shadow-lg);
+    min-width: 280px;
+    max-width: 400px;
+    animation: slideInRight 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toast.success {
+    border-left: 4px solid var(--primary-green);
+}
+
+.toast.error {
+    border-left: 4px solid #e74c3c;
+}
+
+.toast.info {
+    border-left: 4px solid var(--primary-orange);
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.toast .toast-icon {
+    font-size: 20px;
+}
+
+.toast .toast-content {
+    flex: 1;
+}
+
+.toast .toast-title {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.toast .toast-message {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.toast .toast-close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+}

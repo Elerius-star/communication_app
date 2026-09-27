@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CollabMeet - Video Conferencing & Collaboration</title>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+    <!-- Authentication Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="auth-container">
+                <div class="auth-header">
+                    <img src="assets/images/logo.svg" alt="CollabMeet" class="auth-logo" />
+                    <h2 id="authTitle">Welcome to CollabMeet</h2>
+                    <p id="authSubtitle">Sign in to start collaborating</p>
+                </div>
+                
+                <form id="authForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="authUsername">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        <input 
+                            type="text" 
+                            id="authUsername" 
+                            placeholder="Enter your username" 
+                            required 
+                            autocomplete="username"
+                        />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="authPassword">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="authPassword" 
+                                placeholder="Enter your password" 
+                                required 
+                                autocomplete="current-password"
+                            />
+                            <button type="button" id="togglePassword" class="toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="authError" class="auth-error hidden">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="authErrorMessage">Invalid credentials</span>
+                    </div>
+                    
+                    <button type="submit" id="authSubmitBtn" class="btn btn-primary btn-block">
+                        <span id="authBtnText">Sign In</span>
+                        <i class="fas fa-spinner fa-spin hidden" id="authLoadingIcon"></i>
+                    </button>
+                    
+                    <div class="auth-footer">
+                        <span id="authToggleText">Don't have an account?</span>
+                        <button type="button" id="authToggleBtn" class="btn-link">Sign Up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="hidden">
+        <!-- Top Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <i class="fas fa-video" style="color: #FF6B35;"></i>
+                    <span>Collab<span style="color: #FF6B35;">Meet</span></span>
+                </div>
+                <div class="nav-tabs">
+                    <button class="nav-tab active" data-tab="dashboard">
+                        <i class="fas fa-th-large"></i> Dashboard
+                    </button>
+                    <button class="nav-tab" data-tab="meetings">
+                        <i class="fas fa-calendar-alt"></i> Meetings
+                    </button>
+                </div>
+            </div>
+            
+            <div class="nav-right">
+                <button class="btn-icon" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+                <div class="user-menu">
+                    <span id="navUsername">User</span>
+                    <img src="assets/images/avatar-placeholder.png" alt="Avatar" class="avatar" />
+                    <button id="logoutBtn" class="btn-icon" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard View -->
+            <div id="dashboardView" class="view active">
+                <div class="dashboard-header">
+                    <div class="welcome-section">
+                        <h1>Welcome back, <span id="welcomeUsername">User</span>!</h1>
+                        <p>Ready to collaborate? Start a new meeting or join an existing one.</p>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <button id="createMeetingBtn" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus-circle"></i> New Meeting
+                        </button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Active Meetings Section -->
+                    <section class="dashboard-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-users"></i> Active Meetings</h3>
+                            <span class="card-badge" id="activeCount">0</span>
+                        </div>
+                        <div id="activeMeetingsList" class="meeting-list">
+                            <p class="empty-state">No active meetings</p>
+                        </div>
+                    </section>
+
+                    <!-- Meeting Controls Section -->
+                    <section class="dashboard-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-cog"></i> Quick Controls</h3>
+                        </div>
+                        <div class="quick-controls">
+                            <div class="control-group">
+                                <label>
+                                    <i class="fas fa-microphone"></i> Audio
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="audioToggle" checked />
+                                        <span class="toggle-slider"></span>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="control-group">
+                                <label>
+                                    <i class="fas fa-video"></i> Video
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="videoToggle" checked />
+                                        <span class="toggle-slider"></span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Recent Activity -->
+                    <section class="dashboard-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                        </div>
+                        <div id="recentActivity" class="activity-list">
+                            <p class="empty-state">No recent activity</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Meeting Room View -->
+            <div id="meetingView" class="view hidden">
+                <div class="meeting-container">
+                    <!-- Video Grid -->
+                    <div class="video-grid" id="videoGrid">
+                        <div class="video-container local-video">
+                            <video id="localVideo" autoplay muted playsinline></video>
+                            <div class="video-label">
+                                <span>You</span>
+                                <div class="video-status">
+                                    <i class="fas fa-circle online"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Remote videos will be added dynamically -->
+                    </div>
+
+                    <!-- Meeting Controls -->
+                    <div class="meeting-controls">
+                        <button class="ctrl-btn" id="toggleAudio" title="Toggle Audio">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button class="ctrl-btn" id="toggleVideo" title="Toggle Video">
+                            <i class="fas fa-video"></i>
+                        </button>
+                        <button class="ctrl-btn" id="toggleScreenShare" title="Share Screen">
+                            <i class="fas fa-desktop"></i>
+                        </button>
+                        <button class="ctrl-btn" id="toggleWhiteboard" title="Whiteboard">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button class="ctrl-btn" id="shareFileBtn" title="Share File">
+                            <i class="fas fa-file-upload"></i>
+                        </button>
+                        <button class="ctrl-btn ctrl-btn-end" id="endMeetingBtn" title="End Meeting">
+                            <i class="fas fa-phone-slash"></i>
+                        </button>
+                    </div>
+
+                    <!-- Whiteboard -->
+                    <div id="whiteboardModal" class="modal hidden">
+                        <div class="modal-content large">
+                            <div class="modal-header">
+                                <h3><i class="fas fa-pen"></i> Collaboration Whiteboard</h3>
+                                <button class="close-modal" id="closeWhiteboard">&times;</button>
+                            </div>
+                            <canvas id="whiteboardCanvas"></canvas>
+                            <div class="whiteboard-tools">
+                                <button class="tool-btn active" data-tool="pen" title="Pen">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="tool-btn" data-tool="line" title="Line">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button class="tool-btn" data-tool="rectangle" title="Rectangle">
+                                    <i class="fas fa-square"></i>
+                                </button>
+                                <button class="tool-btn" data-tool="circle" title="Circle">
+                                    <i class="fas fa-circle"></i>
+                                </button>
+                                <button class="tool-btn" data-tool="text" title="Text">
+                                    <i class="fas fa-font"></i>
+                                </button>
+                                <button class="tool-btn" data-tool="eraser" title="Eraser">
+                                    <i class="fas fa-eraser"></i>
+                                </button>
+                                <button class="tool-btn" id="clearWhiteboard" title="Clear All">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <div class="color-picker">
+                                    <input type="color" id="drawColor" value="#000000" />
+                                    <input type="range" id="drawSize" min="1" max="20" value="2" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File Sharing Modal -->
+                    <div id="fileShareModal" class="modal hidden">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3><i class="fas fa-file-upload"></i> Share File</h3>
+                                <button class="close-modal" id="closeFileShare">&times;</button>
+                            </div>
+                            <div class="file-share-content">
+                                <div class="drop-zone" id="dropZone">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drag & drop files here or click to browse</p>
+                                    <input type="file" id="fileInput" multiple hidden />
+                                </div>
+                                <div id="fileList" class="file-list"></div>
+                                <button id="sendFilesBtn" class="btn btn-primary" disabled>
+                                    <i class="fas fa-paper-plane"></i> Send Files
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Sidebar -->
+                    <div class="chat-sidebar" id="chatSidebar">
+                        <div class="chat-header">
+                            <h4><i class="fas fa-comments"></i> Chat</h4>
+                            <button class="btn-icon" id="toggleChat">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div id="chatMessages" class="chat-messages"></div>
+                        <div class="chat-input">
+                            <input type="text" id="chatInput" placeholder="Type a message..." />
+                            <button id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Socket.IO & JavaScript -->
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/webrtc.js"></script>
+    <script src="js/whiteboard.js"></script>
+    <script src="js/fileShare.js"></script>
+</body>
+</html>
